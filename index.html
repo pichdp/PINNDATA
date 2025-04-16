@@ -51,29 +51,38 @@
   </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/library/d/1R85X-UUl5NkjnGjtP3zILZ_wkanXrfZJf_XuG1OVy32bhLWmGrzx1Y4x/1";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbydNBJyyTQpWQZfa0R-cLi4HHRy3j3dxMev3NB8gLDujXg8rNjCeiVZgJQotN_mBU1cCg/exec";
 
     async function saveData() {
       const value = document.getElementById("myInput").value;
       if (!value.trim()) return;
 
-      // Send data to Google Sheets
-      await fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ item: value })
-      });
+      try {
+        await fetch(scriptURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ item: value })
+        });
 
-      document.getElementById("myInput").value = "";
-      fetchData();
+        document.getElementById("myInput").value = "";
+        fetchData();
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
     }
 
     async function fetchData() {
-      const res = await fetch(scriptURL);
-      const rows = await res.json();
-      const container = document.getElementById("dataList");
+      try {
+        const res = await fetch(scriptURL);
+        const rows = await res.json();
+        const container = document.getElementById("dataList");
 
-      // Skip header
-      container.innerHTML = rows.slice(1).map(row => `<div>${row[0]}</div>`).join('');
+        container.innerHTML = rows.slice(1).map(row => `<div>${row[0]}</div>`).join('');
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
 
     // Load data on page load
