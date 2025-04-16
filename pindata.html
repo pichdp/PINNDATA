@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pin Data Tool</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #f0f0f0; }
+    .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .input-section, .data-section { margin-bottom: 20px; }
+    .label { font-weight: bold; margin-bottom: 8px; display: block; }
+    input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    .data-section { max-height: 300px; overflow-y: auto; border-top: 1px solid #ccc; padding-top: 10px; }
+    .data-item { padding: 5px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-section">
+      <span class="label">Enter Data</span>
+      <input type="text" id="myInput" placeholder="Type something..." />
+      <button onclick="saveData()">Submit</button>
+    </div>
+    <div class="data-section">
+      <span class="label">Stored Data</span>
+      <div id="dataList"></div>
+    </div>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbydNBJyyTQpWQZfa0R-cLi4HHRy3j3dxMev3NB8gLDujXg8rNjCeiVZgJQotN_mBU1cCg/exec";
+
+    async function saveData() {
+      const value = document.getElementById("myInput").value;
+      if (!value.trim()) return;
+      try {
+        await fetch(scriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item: value })
+        });
+        document.getElementById("myInput").value = "";
+        fetchData();
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    }
+
+    async function fetchData() {
+      try {
+        const res = await fetch(scriptURL);
+        const rows = await res.json();
+        const container = document.getElementById("dataList");
+        container.innerHTML = rows.slice(0).map(row => `<div class="data-item">${row[0]}</div>`).join('');
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
