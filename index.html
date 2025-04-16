@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +50,7 @@
         const res = await fetch(scriptURL);
         const rows = await res.json();
         const container = document.getElementById("dataList");
-        container.innerHTML = rows.slice(0).map(row => `<div class="data-item">${row[0]}</div>`).join('');
+        container.innerHTML = rows.map(row => `<div class="data-item">${row[0]}</div>`).join('');
       } catch (error) {
         console.error("Error fetching data:", error);
       }
